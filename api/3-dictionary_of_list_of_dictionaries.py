@@ -19,7 +19,7 @@ if __name__ == "__main__":
             task_dict = {
                 "username": user["username"],
                 "task": task["title"],
-                "completed": task["completed"]   
+                "completed": task["completed"]
             }
             dict_users_tasks[user["id"]].append(task_dict)
 
