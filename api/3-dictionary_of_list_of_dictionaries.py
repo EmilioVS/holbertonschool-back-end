@@ -1,4 +1,6 @@
 #!/usr/bin/python3
+"""Script to use a REST API, returns information about
+all tasks from all employees and export in JSON"""
 import json
 import requests
 
