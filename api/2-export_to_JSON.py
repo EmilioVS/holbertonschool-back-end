@@ -19,6 +19,7 @@ if __name__ == "__main__":
         params={"_expand": "user"}
     )
     data = response.json()
+
     if not len(data):
         print("RequestError:", 404)
         sys.exit(1)
