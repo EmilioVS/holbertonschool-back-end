@@ -1,27 +1,34 @@
 #!/usr/bin/python3
-"""Using API and export it in csv file"""
-
-from sys import argv
+"""Script to use a REST API for a given employee ID, returns
+information about his/her TODO list progress and export in CSV"""
+import csv
 import requests
-
-url_base = 'https://jsonplaceholder.typicode.com/users/'
-
-
-def export_csv(id):
-    """Export csv file"""
-
-    user = requests.get(url_base + id).json()
-    tasks = requests.get(url_base + id + "/todos/").json()
-    file_name = id + ".csv"
-
-    for task in tasks:
-        data = '"' + str(user['id']) + '",' + '"' + user['username'] + '",' +\
-            '"' + str(task['completed']) + '",' + '"' + task['title'] +\
-               '"\n'
-
-        with open(file_name, 'a', encoding='utf-8') as f:
-            f.write(data)
+import sys
 
 
 if __name__ == "__main__":
-    export_csv(argv[1])
+    if len(sys.argv) != 2:
+        print(f"UsageError: python3 {__file__} employee_id(int)")
+        sys.exit(1)
+
+    API_URL = "https://jsonplaceholder.typicode.com"
+    EMPLOYEE_ID = sys.argv[1]
+
+    response = requests.get(
+        f"{API_URL}/users/{EMPLOYEE_ID}/todos",
+        params={"_expand": "user"}
+    )
+    data = response.json()
+
+    if not len(data):
+        print("RequestError:", 404)
+        sys.exit(1)
+
+    username = data[0]["user"]["username"]
+
+    with open(f"{EMPLOYEE_ID}.csv", "w", newline="") as file:
+        writer = csv.writer(file, quoting=csv.QUOTE_NONNUMERIC)
+        for task in data:
+            writer.writerow(
+                [EMPLOYEE_ID, username, str(task["completed"]), task["title"]]
+            )
